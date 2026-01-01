@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>For My Favorite Person</title>
+    <style>
+        :root {
+            --primary-pink: #ff4d6d;
+            --soft-pink: #ffb3c1;
+            --deep-rose: #c9184a;
+        }
+
+        body {
+            font-family: 'Georgia', serif;
+            background: linear-gradient(135deg, #fff0f3 0%, #ffccd5 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            text-align: center;
+        }
+
+        /* Floating Hearts Animation */
+        .heart {
+            position: absolute;
+            color: var(--primary-pink);
+            font-size: 20px;
+            user-select: none;
+            z-index: -1;
+            animation: float 6s linear infinite;
+            opacity: 0;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            20% { opacity: 0.6; }
+            100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(10px);
+            padding: 3rem;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(255, 77, 109, 0.2);
+            width: 90%;
+            max-width: 450px;
+            border: 2px solid white;
+            position: relative;
+            z-index: 10;
+        }
+
+        h1, h2 { color: var(--deep-rose); margin-bottom: 1.5rem; }
+        p { color: #590d22; font-size: 1.1rem; line-height: 1.6; }
+
+        .step { display: none; }
+        .step.active { display: block; animation: fadeIn 0.8s ease-out; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        input {
+            width: 85%;
+            padding: 12px;
+            margin-top: 20px;
+            border: 2px solid var(--soft-pink);
+            border-radius: 15px;
+            outline: none;
+            font-size: 1rem;
+            transition: 0.3s;
+        }
+
+        input:focus { border-color: var(--primary-pink); box-shadow: 0 0 10px rgba(255, 77, 109, 0.2); }
+
+        button {
+            background: var(--primary-pink);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 25px;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: transform 0.2s, background 0.3s;
+            box-shadow: 0 4px 15px rgba(255, 77, 109, 0.3);
+        }
+
+        button:hover { background: var(--deep-rose); transform: scale(1.05); }
+
+        #noBtn {
+            position: absolute;
+            background: #a3a3a3;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .final-buttons {
+            position: relative;
+            margin-top: 40px;
+            height: 120px;
+        }
+
+        #yesBtn { position: relative; z-index: 100; }
+    </style>
+</head>
+<body>
+
+<div id="heart-container"></div>
+
+<div class="container">
+    <div id="step1" class="step active">
+        <h1>Hey beautiful... ✨</h1>
+        <p>I have a few things I've been meaning to ask you.</p>
+        <button onclick="nextStep(1)">Start here 👋</button>
+    </div>
+
+    <div id="step2" class="step">
+        <p>What is that one special thing about you that makes you different from other girls?</p>
+        <input type="text" id="q1" placeholder="Your secret...">
+        <br>
+        <button onclick="nextStep(2)">Next ❤️</button>
+    </div>
+
+    <div id="step3" class="step">
+        <p>If we were on a date, what ice cream or chocolate should I bring to make you smile?</p>
+        <input type="text" id="q2" placeholder="Tell me your favorites...">
+        <br>
+        <button onclick="nextStep(3)">Next ❤️</button>
+    </div>
+
+    <div id="step4" class="step">
+        <p>What cosmetics do you use that makes you so naturally beautiful?</p>
+        <input type="text" id="q3" placeholder="Is it magic?">
+        <br>
+        <button onclick="nextStep(4)">Next ❤️</button>
+    </div>
+
+    <div id="step5" class="step">
+        <h2>I have to be honest...</h2>
+        <p>You are one of the most beautiful person I've ever met. </p>
+        <p><strong>Will you be my girlfriend?</strong></p>
+        <div class="final-buttons">
+            <button id="yesBtn" onclick="sayLove()">Yes! 💖</button>
+            <button id="noBtn" onmouseover="moveNo()">No</button>
+        </div>
+    </div>
+
+    <div id="step6" class="step">
+        <h1 style="color: #ff4d6d;">Forever yours! ❤️</h1>
+        <p>You've made me the luckiest person alive. </p>
+    </div>
+</div>
+
+<script>
+    // Create floating hearts background
+    function createHeart() {
+        const heart = document.createElement('div');
+        heart.classList.add('heart');
+        heart.innerHTML = '❤️';
+        heart.style.left = Math.random() * 100 + 'vw';
+        heart.style.animationDuration = (Math.random() * 3 + 3) + 's';
+        document.getElementById('heart-container').appendChild(heart);
+        setTimeout(() => heart.remove(), 6000);
+    }
+    setInterval(createHeart, 400);
+
+    function nextStep(current) {
+        const currentDiv = document.getElementById('step' + current);
+        currentDiv.style.opacity = '0';
+        
+        setTimeout(() => {
+            currentDiv.classList.remove('active');
+            const nextDiv = document.getElementById('step' + (current + 1));
+            nextDiv.classList.add('active');
+        }, 400);
+    }
+
+    let yesSize = 1;
+    function moveNo() {
+        const noBtn = document.getElementById('noBtn');
+        const yesBtn = document.getElementById('yesBtn');
+        
+        // Move No button
+        const x = Math.random() * (window.innerWidth - 100);
+        const y = Math.random() * (window.innerHeight - 50);
+        noBtn.style.position = 'fixed';
+        noBtn.style.left = x + 'px';
+        noBtn.style.top = y + 'px';
+
+        // Make Yes button bigger
+        yesSize += 0.15;
+        yesBtn.style.transform = `scale(${yesSize})`;
+    }
+
+    function sayLove() {
+        nextStep(5);
+        // Add extra hearts on yes
+        for(let i=0; i<20; i++) {
+            setTimeout(createHeart, i * 100);
+        }
+    }
+
+    // Support for Enter key
+    document.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') {
+            const activeStep = document.querySelector('.step.active');
+            const stepId = parseInt(activeStep.id.replace('step', ''));
+            if (stepId < 5) nextStep(stepId);
+        }
+    });
+</script>
+
+</body>
+</html>
