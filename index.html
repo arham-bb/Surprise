@@ -21,22 +21,22 @@
             margin: 0;
             overflow: hidden;
             text-align: center;
-            /* Prevents pull-to-refresh on mobile */
             overscroll-behavior: none;
         }
 
+        /* Floating Hearts */
         .heart {
             position: absolute;
             color: var(--primary-pink);
             font-size: 20px;
             user-select: none;
             z-index: -1;
-            animation: float 6s linear infinite;
+            animation: float 5s linear infinite;
             opacity: 0;
         }
 
         @keyframes float {
-            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            0% { transform: translateY(105vh) scale(0); opacity: 0; }
             20% { opacity: 0.6; }
             100% { transform: translateY(-10vh) scale(1.5); opacity: 0; }
         }
@@ -48,18 +48,17 @@
             border-radius: 25px;
             box-shadow: 0 10px 25px rgba(255, 77, 109, 0.2);
             width: 85%;
-            max-width: 350px; /* Slimmer for mobile screens */
+            max-width: 350px;
             border: 2px solid white;
             position: relative;
             z-index: 10;
         }
 
         h1 { font-size: 1.8rem; color: var(--deep-rose); margin-bottom: 1rem; }
-        h2 { font-size: 1.5rem; color: var(--deep-rose); }
-        p { color: #590d22; font-size: 1rem; line-height: 1.5; margin: 10px 0; }
+        p { color: #590d22; font-size: 1rem; line-height: 1.5; }
 
         .step { display: none; }
-        .step.active { display: block; animation: fadeIn 0.5s ease-out; }
+        .step.active { display: block; animation: fadeIn 0.4s ease-out; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -72,9 +71,8 @@
             margin-top: 15px;
             border: 2px solid var(--soft-pink);
             border-radius: 12px;
+            font-size: 16px; /* Prevents mobile auto-zoom */
             outline: none;
-            font-size: 16px; /* Prevents iOS zoom on focus */
-            transition: 0.3s;
         }
 
         button {
@@ -87,26 +85,24 @@
             margin-top: 20px;
             font-weight: bold;
             font-size: 1rem;
-            transition: transform 0.2s;
             -webkit-tap-highlight-color: transparent;
         }
 
-        #yesBtn { transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        #yesBtn { transition: transform 0.2s; }
 
         #noBtn {
             position: absolute;
             background: #a3a3a3;
-            /* Faster transition for mobile "teleporting" */
             transition: 0.2s ease;
             white-space: nowrap;
+            z-index: 999;
         }
 
         .final-buttons {
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            min-height: 150px;
+            min-height: 180px;
             margin-top: 20px;
         }
     </style>
@@ -144,7 +140,7 @@
     </div>
 
     <div id="step5" class="step">
-        <h2>I have to be honest...</h2>
+        <h2 style="color: var(--deep-rose);">I have to be honest...</h2>
         <p>You are the most amazing person I've ever met.</p>
         <p><strong>Will you be my girlfriend?</strong></p>
         <div class="final-buttons">
@@ -169,16 +165,13 @@
         document.getElementById('heart-container').appendChild(heart);
         setTimeout(() => heart.remove(), 5000);
     }
-    setInterval(createHeart, 600);
+    setInterval(createHeart, 500);
 
     function nextStep(current) {
         const currentDiv = document.getElementById('step' + current);
-        currentDiv.style.opacity = '0';
-        setTimeout(() => {
-            currentDiv.classList.remove('active');
-            const nextDiv = document.getElementById('step' + (current + 1));
-            nextDiv.classList.add('active');
-        }, 300);
+        currentDiv.classList.remove('active');
+        const nextDiv = document.getElementById('step' + (current + 1));
+        nextDiv.classList.add('active');
     }
 
     let yesSize = 1;
@@ -186,19 +179,27 @@
         const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
         
-        // Mobile-safe random positioning (keeping it away from edges)
-        const x = Math.random() * (window.innerWidth - 120) + 10;
-        const y = Math.random() * (window.innerHeight - 100) + 10;
+        // Calculate safe boundaries so it doesn't leave the screen
+        const padding = 20;
+        const maxX = window.innerWidth - noBtn.offsetWidth - padding;
+        const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+        
+        // Generate random coordinates
+        const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
+        const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
         
         noBtn.style.position = 'fixed';
-        noBtn.style.left = x + 'px';
-        noBtn.style.top = y + 'px';
+        noBtn.style.left = randomX + 'px';
+        noBtn.style.top = randomY + 'px';
 
+        // Make the Yes button grow
         yesSize += 0.2;
         yesBtn.style.transform = `scale(${yesSize})`;
     }
 
     function sayLove() {
+        const noBtn = document.getElementById('noBtn');
+        noBtn.style.display = 'none'; // Hide "No" after she says yes
         nextStep(5);
         for(let i=0; i<30; i++) {
             setTimeout(createHeart, i * 100);
