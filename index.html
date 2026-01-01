@@ -24,7 +24,6 @@
             overscroll-behavior: none;
         }
 
-        /* Floating Hearts */
         .heart {
             position: absolute;
             color: var(--primary-pink);
@@ -71,7 +70,7 @@
             margin-top: 15px;
             border: 2px solid var(--soft-pink);
             border-radius: 12px;
-            font-size: 16px; /* Prevents mobile auto-zoom */
+            font-size: 16px;
             outline: none;
         }
 
@@ -88,22 +87,28 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        #yesBtn { transition: transform 0.2s; }
+        .final-buttons {
+            position: relative; /* Container for the jumping button */
+            height: 200px; /* Set height to give the No button room to jump */
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #yesBtn { 
+            transition: transform 0.2s; 
+            z-index: 10;
+        }
 
         #noBtn {
             position: absolute;
             background: #a3a3a3;
-            transition: 0.2s ease;
+            transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             white-space: nowrap;
-            z-index: 999;
-        }
-
-        .final-buttons {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 180px;
-            margin-top: 20px;
+            z-index: 5;
+            /* Initial position */
+            bottom: 10px;
         }
     </style>
 </head>
@@ -143,7 +148,7 @@
         <h2 style="color: var(--deep-rose);">I have to be honest...</h2>
         <p>You are the most amazing person I've ever met.</p>
         <p><strong>Will you be my girlfriend?</strong></p>
-        <div class="final-buttons">
+        <div class="final-buttons" id="buttonArea">
             <button id="yesBtn" onclick="sayLove()">Yes! 💖</button>
             <button id="noBtn" onclick="moveNo()">No</button>
         </div>
@@ -178,28 +183,27 @@
     function moveNo() {
         const noBtn = document.getElementById('noBtn');
         const yesBtn = document.getElementById('yesBtn');
+        const area = document.getElementById('buttonArea');
         
-        // Calculate safe boundaries so it doesn't leave the screen
-        const padding = 20;
-        const maxX = window.innerWidth - noBtn.offsetWidth - padding;
-        const maxY = window.innerHeight - noBtn.offsetHeight - padding;
+        // Boundaries of the container "buttonArea"
+        const areaWidth = area.offsetWidth;
+        const areaHeight = area.offsetHeight;
         
-        // Generate random coordinates
-        const randomX = Math.max(padding, Math.floor(Math.random() * maxX));
-        const randomY = Math.max(padding, Math.floor(Math.random() * maxY));
+        // Calculate random position within the container
+        // Keeping it away from the center where the Yes button is growing
+        const randomX = Math.floor(Math.random() * (areaWidth - noBtn.offsetWidth));
+        const randomY = Math.floor(Math.random() * (areaHeight - noBtn.offsetHeight));
         
-        noBtn.style.position = 'fixed';
         noBtn.style.left = randomX + 'px';
         noBtn.style.top = randomY + 'px';
 
         // Make the Yes button grow
-        yesSize += 0.2;
+        yesSize += 0.15;
         yesBtn.style.transform = `scale(${yesSize})`;
     }
 
     function sayLove() {
-        const noBtn = document.getElementById('noBtn');
-        noBtn.style.display = 'none'; // Hide "No" after she says yes
+        document.getElementById('noBtn').style.display = 'none';
         nextStep(5);
         for(let i=0; i<30; i++) {
             setTimeout(createHeart, i * 100);
